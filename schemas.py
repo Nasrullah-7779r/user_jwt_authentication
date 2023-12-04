@@ -17,4 +17,8 @@ class UserOut(BaseModel):
 class UserInForToken(BaseModel):
         id:int
         name:str
+
+class UserInForUpdate(BaseModel):
+        email:str
+        password:str
         

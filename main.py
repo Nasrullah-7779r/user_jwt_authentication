@@ -11,4 +11,16 @@ app = FastAPI()
 
 app.include_router(user.router)
 
-
+@app.get('/')
+def start():
+    return [
+        {
+        "for register":"go at /register"
+        },
+        {
+            "for token":"go at /token"
+        },
+        {
+            "for access":"go at /test/user_id"
+        }
+    ]

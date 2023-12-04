@@ -3,21 +3,13 @@ from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException, status
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
 from config import setting
-load_dotenv()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# SECRET_KEY = os.getenv("SECRET_KEY")
-# ALGORITHM = os.getenv("ALGORITHM")
-# ACCESS_TOKEN_EXPIRE_MINUTES_str = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 SECRET_KEY = setting.secret_key
 ALGORITHM = setting.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES= setting.access_token_expire_minutes
-
-some="3"
-val=int(some)
 
 def get_access_token(data:dict):
     
