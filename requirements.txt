@@ -4,3 +4,5 @@ alembic
 psycopg2
 python-multipart
 python-dotenv
+passlib
+bcrypt

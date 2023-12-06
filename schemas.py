@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pydantic import BaseModel
 
 
@@ -22,3 +22,17 @@ class UserInForUpdate(BaseModel):
         email:str
         password:str
         
+
+pst_timezone = timezone(timedelta(hours=5))
+
+class NoteIn(BaseModel):
+        title: str
+        description: str
+        created_at: datetime = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(pst_timezone)
+
+class NoteOut(BaseModel):
+        title: str
+        description: str
+        owner_id: int
+        created_at: datetime
+                
