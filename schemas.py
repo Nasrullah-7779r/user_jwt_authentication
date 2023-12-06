@@ -18,6 +18,7 @@ class UserInForToken(BaseModel):
         id:int
         name:str
 
+
 class UserInForUpdate(BaseModel):
         email:str
         password:str
@@ -36,3 +37,8 @@ class NoteOut(BaseModel):
         owner_id: int
         created_at: datetime
                 
+class TokensForRefresh(BaseModel):
+        refresh_token: str
+        access_token: str
+
+                                

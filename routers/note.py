@@ -28,3 +28,16 @@ def create_note(note: NoteIn, db:Session = Depends(get_db), user:int = Depends(g
     return new_note
 
 
+
+@router.delete('/delete_note/{note_id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_note(note_id:int, db:Session = Depends(get_db), user:int = Depends(get_current_user)):
+    print(f"note id is{note_id}") 
+    note = db.query(Note).filter(Note.id == note_id).first()
+    print(f"note is{note}")
+    if note is None:
+        raise HTTPException(detail="Note not found", status_code=status.HTTP_404_NOT_FOUND)
+    if note.owner_id != user: # type: ignore
+        raise HTTPException(detail="Not authorized for requested action", status_code=status.HTTP_403_FORBIDDEN)
+    
+    db.delete(note)
+    db.commit()

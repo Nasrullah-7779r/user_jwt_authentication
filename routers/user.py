@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Form, Header, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy import and_, func
 from oauth2 import get_access_token, get_tokens, get_current_user, verify_access_token
-from schemas import UserIn, UserInForUpdate, UserOut
+from schemas import TokensForRefresh, UserIn, UserInForUpdate, UserOut
 from sqlalchemy.orm import Session
 from db import get_db
 from models import Note, User
@@ -42,11 +42,11 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(),  db: Session 
        
 
 @router.post('/refresh')
-def refresh_token(refresh_token: str= Form(), access_token: str = Form()):
-       print(refresh_token)
-       print(access_token)
+def refresh_token(tokens: TokensForRefresh):
+       print(tokens.refresh_token)
+       print(tokens.access_token)
        try:  
-           refresh_token_decoded = jwt.decode(refresh_token, REFRESH_SECRET_KEY, ALGORITHM)
+           refresh_token_decoded = jwt.decode(tokens.refresh_token, REFRESH_SECRET_KEY, ALGORITHM)
            id_from_refresh = refresh_token_decoded.get('id')  # Extract user ID from refresh token
               
            new_access_token = get_access_token({"id": id_from_refresh})
