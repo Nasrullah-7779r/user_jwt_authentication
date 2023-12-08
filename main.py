@@ -1,6 +1,5 @@
 from fastapi import FastAPI
-from routers import user
-from routers import note
+from routers import user, note, vote
 from db import engine
 from models import base
 
@@ -12,6 +11,8 @@ app = FastAPI()
 
 app.include_router(user.router)
 app.include_router(note.router)
+app.include_router(vote.router)
+
 
 @app.get('/')
 def start():

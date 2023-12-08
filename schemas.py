@@ -41,4 +41,7 @@ class TokensForRefresh(BaseModel):
         refresh_token: str
         access_token: str
 
+class VoteIn(BaseModel):
+        note_id: int
+        voter_id: int
                                 
