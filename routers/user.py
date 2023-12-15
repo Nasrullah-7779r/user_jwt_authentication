@@ -1,8 +1,9 @@
-import pdb
-from fastapi import APIRouter, Depends, Form, Header, status, HTTPException
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from sqlalchemy import and_, func
-from oauth2 import get_access_token, get_tokens, get_current_user, verify_access_token
+from fastapi import APIRouter, Depends, WebSocket, status, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.security import  OAuth2PasswordRequestForm
+from sqlalchemy import func
+import websockets
+from oauth2 import get_access_token, get_tokens, get_current_user, oauth2_scheme
 from schemas import TokensForRefresh, UserIn, UserInForUpdate, UserOut
 from sqlalchemy.orm import Session
 from db import get_db
@@ -10,6 +11,8 @@ from models import Note, User
 import util
 from jose import JWTError, jwt
 from oauth2 import REFRESH_SECRET_KEY, ALGORITHM
+from .notify import manager
+
 
 router = APIRouter(tags=["User"])
 
@@ -26,7 +29,7 @@ def register_user(user:UserIn, db: Session = Depends(get_db) ):
    
 
 @router.post('/token', status_code=status.HTTP_201_CREATED)
-def login(user_credentials: OAuth2PasswordRequestForm = Depends(),  db: Session = Depends(get_db)):
+async def login(user_credentials: OAuth2PasswordRequestForm = Depends(),  db: Session = Depends(get_db)):
        
        verified_user = db.query(User).filter(func.lower(User.name) == func.lower(user_credentials.username)).first()
        
@@ -38,6 +41,24 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(),  db: Session 
     
        token, refresh_token = get_tokens({"id":verified_user.id})
        
+       # client_id = f"user_{verified_user.id}"
+
+       # async def establish_websocket_connection(websocket, path):
+       #  await manager.connect(websocket)
+       #  try:
+       #      while True:
+       #          data = await websocket.recv()
+       #          await manager.send_personal_message(f"You wrote: {data}", websocket)
+       #          await manager.broadcast(f"Client #{client_id} says: {data}")
+       #  except websockets.exceptions.ConnectionClosedError:
+       #      pass
+        
+       #  finally:
+       #      manager.disconnect(websocket)
+       #      await manager.broadcast(f"Client #{client_id} left the chat")
+
+       # server = await websockets.serve(establish_websocket_connection, "localhost", 8000)
+
        return {"access_token": token, "refresh_token": refresh_token, "token_type": "bearer"}
        
 
@@ -128,3 +149,5 @@ def get_notes(db: Session = Depends(get_db), user:int = Depends(get_current_user
        
        notes = db.query(Note).filter(Note.owner_id == user).all()
        return notes
+
+

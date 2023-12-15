@@ -24,6 +24,7 @@ def create_note(note: NoteIn, db:Session = Depends(get_db), user:int = Depends(g
 
     db.add(new_note)
     db.commit()
+
     db.refresh(new_note)
     return new_note
 
@@ -41,3 +42,5 @@ def delete_note(note_id:int, db:Session = Depends(get_db), user:int = Depends(ge
     
     db.delete(note)
     db.commit()
+
+    

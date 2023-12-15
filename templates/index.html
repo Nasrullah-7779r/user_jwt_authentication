@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login</title>
+    </head>
+    <body>
+        <h1>Please Login here</h1>
+
+        <h2>Username: <input type="text" name="name" id="username"></span></h2><br>
+        <h2>Password: <input type="text" name="password" id="password"></span></h2>
+
+        <form onsubmit = "login(event)">
+
+        <!-- <input type="text" id="messageText" autocomplete="off"/> -->
+                    
+        <button style="margin-left: 13%">Login</button>
+   
+        </form>
+
+        <ul id='messages'>
+        </ul>
+
+        <script>
+
+        var access_token 
+
+        var refresh_token
+
+         var client_id = Date.now()
+         
+       // document.querySelector("#ws-id").textContent = client_id;
+        
+        
+        // ws.onmessage = function(event) {
+        //         var messages = document.getElementById('messages')
+        //         var message = document.createElement('li')
+        //         var content = document.createTextNode(event.data)
+        //         message.appendChild(content)
+        //         messages.appendChild(message)
+        //     };
+
+            function login(event) {
+                
+                event.preventDefault()
+
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                localStorage.setItem('username', username);
+                
+                console.log("user is: " + username);
+                console.log("password is: " + password);
+                
+                const formData = new URLSearchParams();
+                formData.append('username', username);
+                formData.append('password', password);
+
+                body = {"username": username, "password": password}
+                console.log("before fetch")
+                fetch('http://127.0.0.1:8000/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData
+        
+    })
+    .then(response => {
+        console.log("after fetch")
+        if (!response.ok) {
+            throw new Error('Login failed');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("after data")
+
+        const access_token = data.access_token
+        refresh_token = data.refresh_token
+
+        console.log('Login successful:', data);
+        
+        // socketURL = {"socket": "ws://localhost:8000/ws", "user_name": username};
+  
+        const wsUrl = `ws://localhost:8000/ws/${username}`;
+        
+        // console.log('acces_token is '+ access_token)
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('wsUrl', wsUrl);
+
+        // localStorage.setItem('socketURL', socketURL);
+        console.log("socket url is stored")
+       
+    })
+        }
+
+        
+
+        </script>
+<br>
+<h1>Want to upvote/devote?</h1><a href="/vote">click here</a>
+    </body>
+</html>

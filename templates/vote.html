@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Vote</title>
+    </head>
+    <body>
+        <h1>You can upvote or devote any other user's note</h1>
+
+        <h1>Upvote</h1>
+        <!-- <h2>User id: <input type="text"  id="u_userid"></span></h2><br> -->
+        <h2>Note id: <input type="text"  id="u_noteid"></span></h2>
+        <button style="margin-left: 10%" onclick="upvote(event)">Upvote</button><br>
+
+        
+        <h2>Your name: <span id="ws-id"></span></h2>
+        <ul id='notifications'>
+        </ul>
+        
+        <h1>Devote</h1>
+        <!-- <h2>User id: <input type="text"  id="d_userid"></span></h2><br> -->
+        <h2>Note id: <input type="text"  id="d_noteid"></span></h2>
+
+        <form onsubmit = "devote(event)">
+
+        <!-- <input type="text" id="messageText" autocomplete="off"/> -->
+                    
+        <button style="margin-left: 10%">Devote</button>
+   
+        </form>
+
+
+        <script>
+
+        var access_token 
+
+        var refresh_token
+      
+       const storedUsername = localStorage.getItem('username');
+
+       document.querySelector("#ws-id").textContent =  storedUsername;
+              
+       const wsUrl = localStorage.getItem('wsUrl');
+       //const ws = new WebSocket(wsUrl.valueOf("socket"), wsUrl.valueOf("user_name"));
+       //    const wsUrl = localStorage.getItem('wsUrl');
+       
+     const ws = new WebSocket(wsUrl);
+        
+       ws.onmessage = function(event) {
+                var notifications = document.getElementById('notifications')
+                var message = document.createElement('li')
+                var content = document.createTextNode(event.data)
+                message.appendChild(content)
+                notifications.appendChild(message)
+            };
+
+        function sendNotification() {
+            note_id = document.getElementById('u_noteid').value    
+            var input = storedUsername + ' upvoted note ' + note_id
+                ws.send(input)
+                // input.value = ''
+                
+            }
+
+
+            function upvote(event) {
+                
+               const token = localStorage.getItem('token')
+                event.preventDefault()
+                
+                // console.log('token is ' + token)
+                
+                const note_id = document.getElementById('u_noteid').value;
+                // const password = document.getElementById('password').value;
+                
+                console.log("note id is: " + note_id);
+                
+                console.log("before fetch")
+                fetch('http://127.0.0.1:8000/upvote/'+ note_id, {
+        method: 'POST',
+        headers: {
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ' + token
+        },
+        // body: formData
+        
+    })
+    .then(response => {
+        console.log("after fetch")
+        if (!response.ok) {
+            throw new Error('Vote failed');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("after data")
+
+        console.log('response data', data);
+
+            })
+
+            sendNotification()
+        }      
+
+        </script>
+    </body>
+</html>

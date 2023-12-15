@@ -1,5 +1,6 @@
 
 from datetime import datetime, timedelta, timezone
+from fastapi import WebSocket
 from pydantic import BaseModel
 
 
@@ -44,4 +45,8 @@ class TokensForRefresh(BaseModel):
 class VoteIn(BaseModel):
         note_id: int
         voter_id: int
+                 
                                 
+
+        
+       
